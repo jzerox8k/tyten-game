@@ -55,6 +55,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Floor_Hall
       objectReference: {fileID: 0}
+    - target: {fileID: 2305426987445321673, guid: 1aecede54d5884644b2a7e05358be9ca, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322063386387401908, guid: 1aecede54d5884644b2a7e05358be9ca, type: 3}
+      propertyPath: m_TagString
+      value: Room Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 4387981186545135061, guid: 1aecede54d5884644b2a7e05358be9ca, type: 3}
+      propertyPath: m_TagString
+      value: Room Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 4452583015839401415, guid: 1aecede54d5884644b2a7e05358be9ca, type: 3}
       propertyPath: m_RootOrder
       value: 0

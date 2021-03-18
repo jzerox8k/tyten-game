@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Room Center
+  - Room Wall
   layers:
   - Default
   - TransparentFX

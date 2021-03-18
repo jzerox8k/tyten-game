@@ -30,9 +30,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2042147368122053406, guid: 1aecede54d5884644b2a7e05358be9ca, type: 3}
+      propertyPath: m_TagString
+      value: Room Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 2305426987445321673, guid: 1aecede54d5884644b2a7e05358be9ca, type: 3}
       propertyPath: m_Name
       value: Floor_Corner
+      objectReference: {fileID: 0}
+    - target: {fileID: 2305426987445321673, guid: 1aecede54d5884644b2a7e05358be9ca, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 3322063386387401908, guid: 1aecede54d5884644b2a7e05358be9ca, type: 3}
+      propertyPath: m_TagString
+      value: Room Wall
       objectReference: {fileID: 0}
     - target: {fileID: 4452583015839401415, guid: 1aecede54d5884644b2a7e05358be9ca, type: 3}
       propertyPath: m_RootOrder
