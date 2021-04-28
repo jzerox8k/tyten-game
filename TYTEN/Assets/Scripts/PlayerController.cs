@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Every frame, check if we are currently in a location that allows us to change our direction
         if (changeDirection)
         {
             if (Input.GetKeyDown("w"))
@@ -62,6 +63,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        // 
         if (stalled && (valid_direction != Direction.ANY))
         {
             if (run_direction != valid_direction)

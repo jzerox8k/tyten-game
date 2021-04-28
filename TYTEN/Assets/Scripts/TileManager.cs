@@ -13,7 +13,7 @@ public class TileManager : MonoBehaviour
     public Transform tile_sprite;
     public SpriteRenderer tile_spriteRenderer;
     List<EdgeCollider2D> edges;
-    public Sprite[] sprites;
+    public Sprite[] sprites = new Sprite[] { };
 
     private static int[] tile_map = new int[] { 0, 1, 1, 2,
                                                 1, 3, 2, 4,
