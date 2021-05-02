@@ -2,22 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using DirectionEnumerator;
+
 public class GuardController : MonoBehaviour
 {
     public float run_speed = 1.0f;
+
     public float stall_time = 3.0f;
 
+    public float rotation_speed = 1.0f;
+    public float scanner_distance = Mathf.Infinity;
+
     public bool changeDirection = true;
+    public bool shut_allowed = true;
     bool stalled;
-    
-    enum Direction
-    {
-        NONE = 0,
-        NORTH = 1,
-        EAST = 2,
-        SOUTH = 4,
-        WEST = 8,
-    };
 
     Dictionary<string, Direction> direction_map = new Dictionary<string, Direction>()
     {
@@ -36,11 +34,11 @@ public class GuardController : MonoBehaviour
     public new Collider2D collider;
     private Collider2D room_center;
     private Collider2D wall;
+    public GameObject scanner;
 
     // Start is called before the first frame update
     void Start()
     {
-        run_speed = 1.0f;
         stall_time = 3.0f;
         run_direction = Direction.NONE;
         changeDirection = true;
@@ -61,7 +59,9 @@ public class GuardController : MonoBehaviour
         {
             yield return new WaitForSeconds(stall_time);
             changeDirection = true; // allow for next move to occur. 
+            shut_allowed = true;
             Debug.Log("Movement is allowed again.");
+            Debug.Log("Door Locks are enabled again.");
         }
     }
 
@@ -70,17 +70,17 @@ public class GuardController : MonoBehaviour
         List<Direction> vds = new List<Direction>();
         if (room_center != null)
         {
-            Debug.Log("Found Room! : " + Time.time);
+            //Debug.Log("Found Room! : " + Time.time);
             foreach (Transform irb in room_center.transform.parent)
             {
                 Direction dir;
                 Collider2D irb_cd2d;
                 if (irb.TryGetComponent(out irb_cd2d))
                 {
-                    Debug.Log("Trying Direction: " + irb_cd2d.name + "...");
+                    //Debug.Log("Trying Direction: " + irb_cd2d.name + "...");
                     if (direction_map.TryGetValue(irb_cd2d.name, out dir))
                     {
-                        if (irb_cd2d.tag == "Untagged")
+                        if (irb_cd2d.tag == "Hallway")
                         {
                             vds.Add(direction_map[irb_cd2d.name]);
                         }
@@ -88,7 +88,7 @@ public class GuardController : MonoBehaviour
                 }
             }
         }
-        Debug.Log("Found " + vds.Count + " Valid Directions! : " + Time.time);
+        //Debug.Log("Found " + vds.Count + " Valid Directions! : " + Time.time);
         return vds;
     }
 
@@ -138,12 +138,77 @@ public class GuardController : MonoBehaviour
 
                     // ... and stall
                     stalled = true;
+
+                    // look for the player
+                    if (ScanForPlayer() && shut_allowed)
+                    {
+                        // close a random door
+                        valid_directions = FindValidDirections();
+                        Direction closing_door = valid_directions[Random.Range(0, valid_directions.Count)];
+                        GameObject tile = room_center.transform.parent.gameObject;
+                        Debug.Log("Parent Tile : " + tile.name);
+                        tile.GetComponent<TileManager>().ToggleWall(closing_door);
+                        shut_allowed = false; // wait for cooldown
+                    }
                     break;
             }
         }
 
         // keep moving in the direction of the current movement vector
         rb.MovePosition(rb.position + run_vector * run_speed * Time.fixedDeltaTime);
+    }
+
+    private bool ScanForPlayer()
+    {
+        // toggle if found player
+        bool found = false;
+
+        // rotate the scanner a little
+        scanner.transform.Rotate(new Vector3(0, 0, rotation_speed * Time.fixedDeltaTime));
+
+        Vector2 rc_dir = new Vector2(Mathf.Cos(Mathf.Deg2Rad * scanner.transform.eulerAngles.z),
+                                     Mathf.Sin(Mathf.Deg2Rad * scanner.transform.eulerAngles.z));
+
+        //Debug.Log("Casting Ray from " + rb.transform.position.ToString() + " along direction " + rc_dir + "...");
+
+        // raycast along scanner
+        RaycastHit2D[] hits = Physics2D.RaycastAll(rb.transform.position, rc_dir, scanner_distance);
+
+        Transform reticle = scanner.transform.Find("TargetReticle");
+        Transform beam = scanner.transform.Find("TargetBeam").Find("BeamSprite");
+
+        float wall_distance = scanner_distance;
+        Vector3 wall_position = rb.position + rc_dir.normalized * scanner_distance;
+
+        // look for the player
+        //Debug.Log("Found " + hits.Length + " Colliders.");
+        foreach (RaycastHit2D hit in hits)
+        {
+            if (hit.transform.tag == "Player")
+            {
+                Debug.Log("FOUND PLAYER! WEE WOO WEE WOO!");
+                found = true;
+                break;
+            }
+            else if (hit.transform.tag == "Room Wall")
+            {
+                wall_distance = hit.distance;
+                wall_position = hit.point;
+                //Debug.Log("Just a wall...");
+                break;
+            }
+        }
+
+        // update the beam stretch and reticle sprite position
+        reticle.position = wall_position;
+        beam.localScale = new Vector3(wall_distance, beam.localScale.y);
+
+        return found;
+    }
+
+    private void CloseDoor()
+    {
+
     }
 
     private void OnTriggerEnter2D(Collider2D other)

@@ -1,6 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DirectionEnumerator;
+
+namespace DirectionEnumerator
+{
+    public enum Direction
+    {
+        ANY = -1,
+        NONE = 0,
+        NORTH = 1,
+        EAST = 2,
+        SOUTH = 4,
+        WEST = 8,
+    };
+}
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,16 +22,6 @@ public class PlayerController : MonoBehaviour
 
     bool changeDirection = true;
     bool stalled;
-
-    enum Direction
-    {
-        NORTH,
-        SOUTH,
-        EAST,
-        WEST,
-        NONE,
-        ANY
-    };
 
     private Direction run_direction;
     private Direction valid_direction;
@@ -37,6 +41,7 @@ public class PlayerController : MonoBehaviour
         changeDirection = true;
         stalled = true;
         collider = GetComponent<Collider2D>();
+        tag = "Player";
     }
 
     // Update is called once per frame
